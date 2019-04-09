@@ -11,10 +11,13 @@ import UIKit
 class TOListTableView : UITableViewController {
 
     var listArray = ["ahmed","ali","mohammed"]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        if let item = defaults.array(forKey: "ListOfData") as? [String]{
+            self.listArray = item
+        }
     }
     
     // MARK - TableNiew DataSource
@@ -46,6 +49,27 @@ class TOListTableView : UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-
+    // MARK - Add New Item
+    
+    @IBAction func AddItem(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add Item", style: .default, handler: { (action) in
+            self.listArray.append(textField.text!)
+            
+            self.defaults.set(self.listArray, forKey: "ListOfData")
+            self.tableView.reloadData()
+        })
+        
+        alert.addTextField { (TextField) in
+            textField = TextField
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    }
+    
 }
 
