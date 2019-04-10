@@ -10,12 +10,26 @@ import UIKit
 
 class TOListTableView : UITableViewController {
 
-    var listArray = ["ahmed","ali","mohammed"]
+    var listArray = [items]()
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let item = defaults.array(forKey: "ListOfData") as? [String]{
+        
+        let newItem = items()
+        newItem.titel  = "youssef"
+        listArray.append(newItem)
+        let newItem3 = items()
+        newItem3.titel  = "youssef"
+        listArray.append(newItem3)
+        let newItem2 = items()
+        newItem2.titel  = "youssef"
+        listArray.append(newItem2)
+        let newItem4 = items()
+        newItem4.titel  = "youssef"
+        
+       
+        if let item = defaults.array(forKey: "ListOfData") as? [items]{
             self.listArray = item
         }
     }
@@ -27,9 +41,10 @@ class TOListTableView : UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Today", for: indexPath)
+        let item = listArray[indexPath.row]
+        cell.textLabel?.text = item.titel
         
-        cell.textLabel?.text = listArray[indexPath.row]
-        
+        cell.accessoryType = item.Done ? .checkmark : .none
         return cell
         
     }
@@ -38,14 +53,8 @@ class TOListTableView : UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        print(listArray[indexPath.row])
-        
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-        
+        listArray[indexPath.row].Done = !listArray[indexPath.row].Done
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
@@ -57,7 +66,9 @@ class TOListTableView : UITableViewController {
         let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default, handler: { (action) in
-            self.listArray.append(textField.text!)
+            let NewItem = items()
+            NewItem.titel = textField.text!
+            self.listArray.append(NewItem)
             
             self.defaults.set(self.listArray, forKey: "ListOfData")
             self.tableView.reloadData()
